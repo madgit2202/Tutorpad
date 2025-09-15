@@ -245,8 +245,19 @@ const TableOfContents = ({
   );
 };
 
+const findUnitForTopic = (subject, topicId) => {
+    for (const unit of subject.units) {
+        for (const chapter of unit.chapters) {
+            if (chapter.topics.some(t => t.id === topicId)) {
+                return unit;
+            }
+        }
+    }
+    return null;
+}
+
 const LessonViewer = ({lessonData, onClose, completedTopics, setCompletedTopics}) => {
-  const {subject, initialUnitId} = lessonData;
+  const {subject, course, term, initialUnitId, initialTopicId} = lessonData;
   const [isTocOpen, setIsTocOpen] = useState(true);
   const [fontSize, setFontSize] = useState(1); // 1 = 1rem
   
@@ -258,6 +269,46 @@ const LessonViewer = ({lessonData, onClose, completedTopics, setCompletedTopics}
   const FONT_STEP = 0.1;
   const MIN_FONT_SIZE = 0.8;
   const MAX_FONT_SIZE = 1.5;
+
+  const flatTopics = useMemo(() => {
+    return subject.units.flatMap((unit) =>
+      unit.chapters.flatMap((chapter) => chapter.topics),
+    );
+  }, [subject]);
+
+  const [activeTopic, setActiveTopic] = useState(() => {
+    if (initialTopicId) {
+        const topic = flatTopics.find(t => t.id === initialTopicId);
+        if (topic) return topic;
+    }
+    const initialUnit = subject.units.find((u) => u.id === initialUnitId);
+    if (
+      initialUnit &&
+      initialUnit.chapters.length > 0 &&
+      initialUnit.chapters[0].topics.length > 0
+    ) {
+      return initialUnit.chapters[0].topics[0];
+    }
+    return flatTopics[0] || null;
+  });
+
+  useEffect(() => {
+    if (activeTopic && course && term && subject) {
+        const unit = findUnitForTopic(subject, activeTopic.id);
+        if (unit) {
+            const lastViewed = {
+                courseId: course.id,
+                termId: term.id,
+                subjectName: subject.name,
+                unitId: unit.id,
+                topicId: activeTopic.id,
+                topicTitle: activeTopic.title,
+                subjectTitle: subject.name,
+            };
+            localStorage.setItem('lastViewedLesson', JSON.stringify(lastViewed));
+        }
+    }
+  }, [activeTopic, course, term, subject]);
 
   const increaseFontSize = () => {
     setFontSize((prev) => Math.min(MAX_FONT_SIZE, prev + FONT_STEP));
@@ -309,24 +360,6 @@ const LessonViewer = ({lessonData, onClose, completedTopics, setCompletedTopics}
       setIsModuleMinimized(false);
     }
   };
-
-  const flatTopics = useMemo(() => {
-    return subject.units.flatMap((unit) =>
-      unit.chapters.flatMap((chapter) => chapter.topics),
-    );
-  }, [subject]);
-
-  const [activeTopic, setActiveTopic] = useState(() => {
-    const initialUnit = subject.units.find((u) => u.id === initialUnitId);
-    if (
-      initialUnit &&
-      initialUnit.chapters.length > 0 &&
-      initialUnit.chapters[0].topics.length > 0
-    ) {
-      return initialUnit.chapters[0].topics[0];
-    }
-    return flatTopics[0] || null;
-  });
 
   const activeTopicIndex = useMemo(
     () => flatTopics.findIndex((t) => t.id === activeTopic?.id),

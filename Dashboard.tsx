@@ -183,10 +183,18 @@ const LogOutIcon = () => (
     </svg>
 );
 
-const Dashboard = ({ onLogout }: { onLogout: () => void }) => {
+const UserIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+    </svg>
+);
+
+const Dashboard = ({ currentUser, onLogout }: { currentUser: { name: string }, onLogout: () => void }) => {
   const [activeModule, setActiveModule] = useState('dashboard');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
+  const [tutorPanelPayload, setTutorPanelPayload] = useState(null);
   const {theme, toggleTheme} = useTheme();
 
   useEffect(() => {
@@ -199,7 +207,13 @@ const Dashboard = ({ onLogout }: { onLogout: () => void }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleModuleChange = (module: string) => {
+  const handleModuleChange = (module: string, payload: any = null) => {
+    if (module === 'tutorpanel') {
+        setTutorPanelPayload(payload);
+    } else {
+        // Clear payload if navigating to a different module
+        setTutorPanelPayload(null);
+    }
     setActiveModule(module);
     setIsMenuOpen(false); // Close menu on selection
   };
@@ -220,7 +234,7 @@ const Dashboard = ({ onLogout }: { onLogout: () => void }) => {
       {/* Mobile Header */}
       <header className="mobile-header">
         <button className="menu-toggle" onClick={() => setIsMenuOpen(true)}><HamburgerIcon /></button>
-        <h2>{moduleName}</h2>
+        <h2>{activeModule === 'dashboard' ? `Hi, ${currentUser.name}` : moduleName}</h2>
       </header>
 
       {/* Sidebar Overlay for mobile */}
@@ -243,6 +257,10 @@ const Dashboard = ({ onLogout }: { onLogout: () => void }) => {
           <li className={activeModule === 'ailab' ? 'active' : ''} onClick={() => handleModuleChange('ailab')}><AiLabIcon /> <span>AI Lab</span></li>
         </ul>
         <div className="sidebar-footer">
+            <div className="sidebar-user-profile">
+                <UserIcon />
+                <span>{currentUser.name}</span>
+            </div>
             <button className="sidebar-toggle" onClick={onLogout}>
                 <LogOutIcon /> <span>Logout</span>
             </button>
@@ -265,7 +283,7 @@ const Dashboard = ({ onLogout }: { onLogout: () => void }) => {
         </button>
         {activeModule === 'dashboard' && <DefaultDashboard onNavigate={handleModuleChange} />}
         {activeModule === 'aiboard' && <AiBoard />}
-        {activeModule === 'tutorpanel' && <Tutorpanel />}
+        {activeModule === 'tutorpanel' && <Tutorpanel initialLesson={tutorPanelPayload} />}
         {activeModule === 'threed-gallery' && <ThreeDGallery />}
         {activeModule === 'ailab' && <AiLab />}
       </main>

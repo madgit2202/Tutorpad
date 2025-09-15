@@ -2,7 +2,7 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
 */
-import React, {useState, useMemo} from 'react';
+import React, {useState, useMemo, useEffect} from 'react';
 
 // Icons for the new card design
 const BrainIcon = () => (
@@ -28,36 +28,6 @@ const CellIcon = () => (
         <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z"/>
     </svg>
 );
-
-
-// Sample data for 3D models with new icon structure
-const modelsData = [
-  {
-    id: 'human-brain',
-    name: 'Human Brain',
-    description: 'A detailed model of the human brain.',
-    icon: <BrainIcon />,
-    colorClass: 'brain-icon-bg',
-    embedUrl: 'https://sketchfab.com/models/e073c2590bc24daaa7323f4daa5b7784/embed',
-  },
-  {
-    id: 'human-cell',
-    name: 'Human Cell',
-    description: 'A detailed model of a human cell.',
-    icon: <CellIcon />,
-    colorClass: 'cell-icon-bg',
-    embedUrl: 'https://sketchfab.com/models/60ef7d2515b0403986ff9e8b7f234a66/embed',
-  },
-  {
-    id: 'human-heart',
-    name: 'Human Heart',
-    description: 'A detailed, animated model of a human heart.',
-    icon: <HeartIcon />,
-    colorClass: 'heart-icon-bg',
-    embedUrl:
-      'https://sketchfab.com/models/c6091410425a4d65b5074127011f0c23/embed',
-  },
-];
 
 const SearchIcon = () => (
   <svg
@@ -89,16 +59,93 @@ const CloseIcon = () => (
   </svg>
 );
 
+const Loader = () => (
+    <div className="threed-loader-container">
+        <div className="pulsar-loader">
+            <div className="pulsar-ring"></div>
+            <div className="pulsar-ring"></div>
+            <div className="pulsar-ring"></div>
+            <div className="pulsar-ring"></div>
+        </div>
+    </div>
+);
+
+
 const ThreeDGallery = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedModel, setSelectedModel] = useState(null);
+  const [models, setModels] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const iconMap = {
+    brain: <BrainIcon />,
+    cell: <CellIcon />,
+    heart: <HeartIcon />,
+  };
+
+  useEffect(() => {
+    const fetchModels = async () => {
+        try {
+            // Simulate a network request
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            // In a real application, you would fetch this data from an API:
+            // const response = await fetch('/api/models');
+            // const modelsDataFromApi = await response.json();
+            const modelsDataFromApi = [
+              {
+                id: 'human-brain',
+                name: 'Human Brain',
+                description: 'A detailed model of the human brain.',
+                iconName: 'brain',
+                colorClass: 'brain-icon-bg',
+                embedUrl: 'https://sketchfab.com/models/e073c2590bc24daaa7323f4daa5b7784/embed',
+              },
+              {
+                id: 'human-cell',
+                name: 'Human Cell',
+                description: 'A detailed model of a human cell.',
+                iconName: 'cell',
+                colorClass: 'cell-icon-bg',
+                embedUrl: 'https://sketchfab.com/models/60ef7d2515b0403986ff9e8b7f234a66/embed',
+              },
+              {
+                id: 'human-heart',
+                name: 'Human Heart',
+                description: 'A detailed, animated model of a human heart.',
+                iconName: 'heart',
+                colorClass: 'heart-icon-bg',
+                embedUrl:
+                  'https://sketchfab.com/models/c6091410425a4d65b5074127011f0c23/embed',
+              },
+            ];
+
+            // Attach the component to the data based on the icon name
+            const modelsWithIcons = modelsDataFromApi.map(model => ({
+                ...model,
+                icon: iconMap[model.iconName] || <BrainIcon /> // Fallback icon
+            }));
+
+            setModels(modelsWithIcons);
+
+        } catch (err) {
+            setError('Failed to load 3D models. Please try again later.');
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    fetchModels();
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   const filteredModels = useMemo(
     () =>
-      modelsData.filter((model) =>
+      models.filter((model) =>
         model.name.toLowerCase().includes(searchTerm.toLowerCase()),
       ),
-    [searchTerm],
+    [searchTerm, models],
   );
 
   const openModel = (model) => {
@@ -131,28 +178,34 @@ const ThreeDGallery = () => {
       </div>
 
       <main className="threed-gallery-grid">
-        {filteredModels.map((model) => (
-          <div
-            key={model.id}
-            className="threed-card"
-            onClick={() => openModel(model)}
-            onKeyDown={(e) =>
-              (e.key === 'Enter' || e.key === ' ') && openModel(model)
-            }
-            role="button"
-            tabIndex={0}>
-            <div className={`threed-card-icon-wrapper ${model.colorClass}`}>
-              {model.icon}
-            </div>
-            <div className="threed-card-content">
-              <h4>{model.name}</h4>
-              <p>{model.description}</p>
-            </div>
-            <div className="threed-card-footer">
-              <span>View Model &rarr;</span>
-            </div>
-          </div>
-        ))}
+        {isLoading ? (
+            <Loader />
+        ) : error ? (
+            <div className="threed-error-container">{error}</div>
+        ) : (
+            filteredModels.map((model) => (
+                <div
+                    key={model.id}
+                    className="threed-card"
+                    onClick={() => openModel(model)}
+                    onKeyDown={(e) =>
+                    (e.key === 'Enter' || e.key === ' ') && openModel(model)
+                    }
+                    role="button"
+                    tabIndex={0}>
+                    <div className={`threed-card-icon-wrapper ${model.colorClass}`}>
+                    {model.icon}
+                    </div>
+                    <div className="threed-card-content">
+                    <h4>{model.name}</h4>
+                    <p>{model.description}</p>
+                    </div>
+                    <div className="threed-card-footer">
+                    <span>View Model &rarr;</span>
+                    </div>
+                </div>
+            ))
+        )}
       </main>
 
       {selectedModel && (

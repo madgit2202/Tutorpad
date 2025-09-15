@@ -2,7 +2,7 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
 */
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { coursesData } from './Tutorpanel';
 
 // Icons for navigation cards
@@ -22,6 +22,11 @@ const AiLabIcon = () => (
     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 2v11a5 5 0 0 0 10 0V2"/><path d="M5 2h14"/><path d="M7 18.5a2.5 2.5 0 0 0 2.5 2.5h5a2.5 2.5 0 0 0 0-5h-5a2.5 2.5 0 0 1 0-5h5a2.5 2.5 0 0 1 2.5 2.5"/></svg>
 );
 
+const ResumeIcon = () => (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+);
+
+
 // Icons for stat cards
 const LibraryIcon = () => (
     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
@@ -33,6 +38,19 @@ const FileTextIcon = () => (
 
 
 const DefaultDashboard = ({ onNavigate }) => {
+    const [lastLesson, setLastLesson] = useState(null);
+
+    useEffect(() => {
+        try {
+            const saved = localStorage.getItem('lastViewedLesson');
+            if (saved) {
+                setLastLesson(JSON.parse(saved));
+            }
+        } catch (error) {
+            console.error("Failed to parse last viewed lesson:", error);
+        }
+    }, []);
+
     // Calculate stats
     const totalCourses = coursesData.length;
     const totalUnits = coursesData.reduce((acc, course) => {
@@ -79,21 +97,40 @@ const DefaultDashboard = ({ onNavigate }) => {
             <div className="dd-quick-nav">
                 <h3>Quick Navigation</h3>
                 <div className="dd-nav-grid">
+                    {lastLesson && (
+                        <div className="dd-nav-card" onClick={() => onNavigate('tutorpanel', lastLesson)}>
+                            <ResumeIcon />
+                            <div className="dd-nav-card-text-wrapper">
+                                <span>Continue Lesson</span>
+                                <p title={`${lastLesson.subjectTitle}: ${lastLesson.topicTitle}`}>
+                                    {lastLesson.subjectTitle}: {lastLesson.topicTitle}
+                                </p>
+                            </div>
+                        </div>
+                    )}
                     <div className="dd-nav-card" onClick={() => onNavigate('tutorpanel')}>
                         <BookOpenIcon />
-                        <span>Browse Courses</span>
+                        <div className="dd-nav-card-text-wrapper">
+                             <span>Browse Courses</span>
+                        </div>
                     </div>
                     <div className="dd-nav-card" onClick={() => onNavigate('aiboard')}>
                         <AiBoardIcon />
-                        <span>AI Whiteboard</span>
+                        <div className="dd-nav-card-text-wrapper">
+                            <span>AI Whiteboard</span>
+                        </div>
                     </div>
                     <div className="dd-nav-card" onClick={() => onNavigate('threed-gallery')}>
                         <ThreeDIcon />
-                        <span>3D Gallery</span>
+                        <div className="dd-nav-card-text-wrapper">
+                             <span>3D Gallery</span>
+                        </div>
                     </div>
                     <div className="dd-nav-card" onClick={() => onNavigate('ailab')}>
                         <AiLabIcon />
-                        <span>AI Sim Lab</span>
+                        <div className="dd-nav-card-text-wrapper">
+                            <span>AI Sim Lab</span>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -242,7 +242,7 @@ const Breadcrumbs = ({path, onNavigate}) => (
   </nav>
 );
 
-const Tutorpanel = () => {
+const Tutorpanel = ({ initialLesson = null }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCourseFilter, setSelectedCourseFilter] = useState('all');
   const [selectedCourse, setSelectedCourse] = useState(null);
@@ -258,6 +258,27 @@ const Tutorpanel = () => {
       return new Set();
     }
   });
+
+  useEffect(() => {
+    if (initialLesson) {
+        const course = coursesData.find(c => c.id === initialLesson.courseId);
+        const term = course?.terms.find(t => t.id === initialLesson.termId);
+        const subject = term?.subjects.find(s => s.name === initialLesson.subjectName);
+
+        if (course && term && subject) {
+            setSelectedCourse(course);
+            setSelectedTerm(term);
+            setSelectedSubject(subject);
+            setLessonData({
+                subject,
+                course,
+                term,
+                initialUnitId: initialLesson.unitId,
+                initialTopicId: initialLesson.topicId,
+            });
+        }
+    }
+  }, [initialLesson]);
 
   useEffect(() => {
     try {
@@ -326,6 +347,8 @@ const Tutorpanel = () => {
   const handleUnitClick = (unit) => {
     setLessonData({
       subject: selectedSubject,
+      course: selectedCourse,
+      term: selectedTerm,
       initialUnitId: unit.id,
     });
   };

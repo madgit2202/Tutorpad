@@ -6,7 +6,7 @@ import React from 'react';
 import LogoIcon from './Components/LogoIcon';
 
 
-const LoginPage = ({ onLogin }: { onLogin: () => void }) => {
+const LoginPage = ({ onLogin, onNavigateToSignup }: { onLogin: () => void, onNavigateToSignup: () => void }) => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         onLogin();
@@ -31,6 +31,9 @@ const LoginPage = ({ onLogin }: { onLogin: () => void }) => {
                     </div>
                     <button type="submit" className="login-button">Sign In</button>
                 </form>
+                <div className="auth-nav-link">
+                    Don't have an account? <button onClick={onNavigateToSignup}>Sign up as a Tutor</button>
+                </div>
                 <div className="login-divider">
                     <span>OR</span>
                 </div>
