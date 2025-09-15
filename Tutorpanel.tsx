@@ -145,6 +145,22 @@ export const coursesData = [
 ];
 
 // --- Icon Components ---
+const BackIcon = () => (
+    <svg 
+      width="24" 
+      height="24" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="2.5" 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+      aria-hidden="true">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+);
+
 const HealthIcon = () => (
   <svg
     width="28"
@@ -312,6 +328,16 @@ const Tutorpanel = () => {
       subject: selectedSubject,
       initialUnitId: unit.id,
     });
+  };
+
+  const handleBack = () => {
+    if (selectedSubject) {
+      setSelectedSubject(null);
+    } else if (selectedTerm) {
+      setSelectedTerm(null);
+    } else if (selectedCourse) {
+      setSelectedCourse(null);
+    }
   };
 
   const handleBreadcrumbNavigate = (index) => {
@@ -516,7 +542,12 @@ const Tutorpanel = () => {
   return (
     <div className="tutorpanel-container">
       <header className="tutorpanel-header">
-        <h1>TutorPad</h1>
+        {selectedCourse && (
+            <button className="tutorpanel-back-button" onClick={handleBack} aria-label="Go back">
+                <BackIcon />
+            </button>
+        )}
+        <h1>Tutorpanel</h1>
         <Breadcrumbs
           path={getBreadcrumbPath()}
           onNavigate={handleBreadcrumbNavigate}

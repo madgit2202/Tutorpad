@@ -60,10 +60,10 @@ The typography is designed to be clear, legible, and hierarchical.
 
 ### Typographic Scale
 
-| Element        | Font Size | Font Weight | Usage Example                    |
-| -------------- | --------- | ----------- | -------------------------------- |
-| Heading 1 (h1) | `2rem`    | 700 (Bold)  | `TutorPad` (in TutorPanel)       |
-| Heading 2 (h2) | `1.5rem`  | 600 (Semi-bold) | `TutorPad` (in Sidebar), Modals  |
+| Element        | Font Size | Font Weight | Usage Example                      |
+| -------------- | --------- | ----------- | ---------------------------------- |
+| Heading 1 (h1) | `2rem`    | 700 (Bold)  | `Tutorpanel` (in Tutorpanel)       |
+| Heading 2 (h2) | `1.5rem`  | 600 (Semi-bold) | `TutorPad` (in Sidebar), Modals    |
 | Heading 3 (h3) | `1.3rem`  | 600 (Semi-bold) | Section titles, Lesson content   |
 | Heading 4 (h4) | `1.2rem`  | 600 (Semi-bold) | Card titles                      |
 | Body (p)       | `1rem`    | 400 (Regular) | Standard paragraph text          |

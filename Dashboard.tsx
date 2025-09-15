@@ -7,29 +7,9 @@ import AiBoard from './AiBoard';
 import Tutorpanel from './Tutorpanel';
 import ThreeDGallery from './ThreeDGallery';
 import {useTheme} from './ThemeContext';
-import SplashScreen from './SplashScreen';
 import AiLab from './AiLab';
 import DefaultDashboard from './DefaultDashboard';
-
-// TODO: Replace this with the final app logo
-const LogoIcon = () => (
-  <svg
-    width="32"
-    height="32"
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    xmlns="http://www.w3.org/2000/svg">
-    <path
-      d="M4 17H20M12 17V21M8 21H16M3 14V6C3 4.89543 3.89543 4 5 4H19C20.1046 4 21 4.89543 21 6V14C21 15.1046 20.1046 16 19 16H5C3.89543 16 3 15.1046 3 14Z"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      fill="none"
-    />
-    <path d="M9 10L12 8.5L15 10L12 11.5L9 10Z" />
-  </svg>
-);
+import LogoIcon from './Components/LogoIcon';
 
 const DashboardIcon = () => (
     <svg 
@@ -144,19 +124,19 @@ const CloseIcon = () => (
   </svg>
 );
 
-const CollapseIcon = () => (
-  <svg
-    className="collapse-icon"
-    width="20"
-    height="20"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round">
-    <polyline points="15 18 9 12 15 6"></polyline>
-  </svg>
+const SidebarToggleIcon = () => (
+    <svg 
+        width="20" 
+        height="20" 
+        viewBox="0 0 24 24" 
+        fill="none" 
+        stroke="currentColor" 
+        strokeWidth="2" 
+        strokeLinecap="round" 
+        strokeLinejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+        <line x1="9" y1="3" x2="9" y2="21"></line>
+    </svg>
 );
 
 const SunIcon = () => (
@@ -206,16 +186,8 @@ const LogOutIcon = () => (
 const Dashboard = ({ onLogout }: { onLogout: () => void }) => {
   const [activeModule, setActiveModule] = useState('dashboard');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const {theme, toggleTheme} = useTheme();
-  const [showSplash, setShowSplash] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowSplash(false);
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -238,14 +210,10 @@ const Dashboard = ({ onLogout }: { onLogout: () => void }) => {
       : activeModule === 'aiboard'
       ? 'Ai Board'
       : activeModule === 'tutorpanel'
-      ? 'TutorPad'
+      ? 'Tutorpanel'
       : activeModule === 'threed-gallery'
       ? '3D Gallery'
       : 'AI Lab';
-
-  if (showSplash) {
-    return <SplashScreen />;
-  }
 
   return (
     <div className={`dashboard-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
@@ -269,7 +237,7 @@ const Dashboard = ({ onLogout }: { onLogout: () => void }) => {
         </div>
         <ul className="sidebar-modules">
           <li className={activeModule === 'dashboard' ? 'active' : ''} onClick={() => handleModuleChange('dashboard')}><DashboardIcon /> <span>Dashboard</span></li>
-          <li className={activeModule === 'tutorpanel' ? 'active' : ''} onClick={() => handleModuleChange('tutorpanel')}><MonitorPenIcon /> <span>TutorPad</span></li>
+          <li className={activeModule === 'tutorpanel' ? 'active' : ''} onClick={() => handleModuleChange('tutorpanel')}><MonitorPenIcon /> <span>Tutorpanel</span></li>
           <li className={activeModule === 'aiboard' ? 'active' : ''} onClick={() => handleModuleChange('aiboard')}><AiBoardIcon /> <span>AI Board</span></li>
           <li className={activeModule === 'threed-gallery' ? 'active' : ''} onClick={() => handleModuleChange('threed-gallery')}><ThreeDIcon /> <span>3D Gallery</span></li>
           <li className={activeModule === 'ailab' ? 'active' : ''} onClick={() => handleModuleChange('ailab')}><AiLabIcon /> <span>AI Lab</span></li>
@@ -285,8 +253,8 @@ const Dashboard = ({ onLogout }: { onLogout: () => void }) => {
               aria-label={
                 isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'
               }>
-              <CollapseIcon />
-              <span>Collapse sidebar</span>
+              <SidebarToggleIcon />
+              <span>{isSidebarCollapsed ? 'Expand' : 'Collapse'}</span>
             </button>
         </div>
       </aside>

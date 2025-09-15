@@ -4,30 +4,56 @@
 */
 import React, {useState, useMemo} from 'react';
 
-// Sample data for 3D models
+// Icons for the new card design
+const BrainIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v0A2.5 2.5 0 0 1 9.5 7v0A2.5 2.5 0 0 0 7 9.5v0A2.5 2.5 0 0 1 4.5 12v0A2.5 2.5 0 0 1 7 14.5v0A2.5 2.5 0 0 0 9.5 17v0A2.5 2.5 0 0 1 12 19.5v0A2.5 2.5 0 0 1 14.5 17v0A2.5 2.5 0 0 0 17 14.5v0A2.5 2.5 0 0 1 19.5 12v0A2.5 2.5 0 0 1 17 9.5v0A2.5 2.5 0 0 0 14.5 7v0A2.5 2.5 0 0 1 12 4.5v0A2.5 2.5 0 0 1 9.5 2"/>
+        <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v0A2.5 2.5 0 0 0 14.5 7v0A2.5 2.5 0 0 1 17 9.5v0A2.5 2.5 0 0 0 19.5 12v0A2.5 2.5 0 0 0 17 14.5v0A2.5 2.5 0 0 1 14.5 17v0A2.5 2.5 0 0 0 12 19.5v0A2.5 2.5 0 0 0 9.5 17v0A2.5 2.5 0 0 1 7 14.5v0A2.5 2.5 0 0 0 4.5 12v0A2.5 2.5 0 0 0 7 9.5v0A2.5 2.5 0 0 1 9.5 7v0A2.5 2.5 0 0 0 12 4.5v0A2.5 2.5 0 0 0 14.5 2"/>
+        <path d="M12 12v10"/>
+        <path d="M12 12a2.5 2.5 0 0 0 2.5-2.5v0A2.5 2.5 0 0 0 12 7v0A2.5 2.5 0 0 0 9.5 9.5v0A2.5 2.5 0 0 0 12 12Z"/>
+        <path d="M4.5 12H2"/>
+        <path d="M22 12h-2.5"/>
+    </svg>
+);
+
+const HeartIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20.84 4.6a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.07a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+    </svg>
+);
+
+const CellIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"/>
+        <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z"/>
+    </svg>
+);
+
+
+// Sample data for 3D models with new icon structure
 const modelsData = [
   {
     id: 'human-brain',
     name: 'Human Brain',
     description: 'A detailed model of the human brain.',
-    imageUrl:
-      'https://images.unsplash.com/photo-1579758629938-03607ccDB445?q=80&w=800&auto=format&fit=crop',
+    icon: <BrainIcon />,
+    colorClass: 'brain-icon-bg',
     embedUrl: 'https://sketchfab.com/models/e073c2590bc24daaa7323f4daa5b7784/embed',
   },
   {
     id: 'human-cell',
     name: 'Human Cell',
     description: 'A detailed model of a human cell.',
-    imageUrl:
-      'https://images.unsplash.com/photo-1582063289721-50d75306ea85?q=80&w=800&auto=format&fit=crop',
+    icon: <CellIcon />,
+    colorClass: 'cell-icon-bg',
     embedUrl: 'https://sketchfab.com/models/60ef7d2515b0403986ff9e8b7f234a66/embed',
   },
   {
     id: 'human-heart',
     name: 'Human Heart',
     description: 'A detailed, animated model of a human heart.',
-    imageUrl:
-      'https://images.unsplash.com/photo-1599623236021-93c44a2b9044?q=80&w=800&auto=format&fit=crop',
+    icon: <HeartIcon />,
+    colorClass: 'heart-icon-bg',
     embedUrl:
       'https://sketchfab.com/models/c6091410425a4d65b5074127011f0c23/embed',
   },
@@ -61,14 +87,6 @@ const CloseIcon = () => (
     <line x1="18" y1="6" x2="6" y2="18"></line>
     <line x1="6" y1="6" x2="18" y2="18"></line>
   </svg>
-);
-
-const MedicalIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-        <line x1="12" y1="8" x2="12" y2="16"></line>
-        <line x1="8" y1="12" x2="16" y2="12"></line>
-    </svg>
 );
 
 const ThreeDGallery = () => {
@@ -123,19 +141,15 @@ const ThreeDGallery = () => {
             }
             role="button"
             tabIndex={0}>
-            <div className="threed-card-image-wrapper">
-              <img
-                src={model.imageUrl}
-                alt={model.name}
-                className="threed-card-image"
-              />
-              <div className="threed-card-icon">
-                <MedicalIcon />
-              </div>
+            <div className={`threed-card-icon-wrapper ${model.colorClass}`}>
+              {model.icon}
             </div>
             <div className="threed-card-content">
               <h4>{model.name}</h4>
               <p>{model.description}</p>
+            </div>
+            <div className="threed-card-footer">
+              <span>View Model &rarr;</span>
             </div>
           </div>
         ))}

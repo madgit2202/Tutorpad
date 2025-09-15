@@ -7,16 +7,11 @@ import React from 'react';
 const SplashScreen = () => {
   return (
     <div className="splash-screen" aria-hidden="true">
-      <div className="splash-loader">
-        <div className="loader-square"></div>
-        <div className="loader-square"></div>
-        <div className="loader-square"></div>
-        <div className="loader-square"></div>
-        <div className="loader-square"></div>
-        <div className="loader-square"></div>
-        <div className="loader-square"></div>
-        <div className="loader-square"></div>
-        <div className="loader-square"></div>
+      <div className="pulsar-loader">
+        <div className="pulsar-ring"></div>
+        <div className="pulsar-ring"></div>
+        <div className="pulsar-ring"></div>
+        <div className="pulsar-ring"></div>
       </div>
     </div>
   );

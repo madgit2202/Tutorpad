@@ -22,18 +22,23 @@ const AiLabIcon = () => (
     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 2v11a5 5 0 0 0 10 0V2"/><path d="M5 2h14"/><path d="M7 18.5a2.5 2.5 0 0 0 2.5 2.5h5a2.5 2.5 0 0 0 0-5h-5a2.5 2.5 0 0 1 0-5h5a2.5 2.5 0 0 1 2.5 2.5"/></svg>
 );
 
+// Icons for stat cards
+const LibraryIcon = () => (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+);
+
+const FileTextIcon = () => (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><line x1="10" y1="9" x2="8" y2="9"></line></svg>
+);
+
 
 const DefaultDashboard = ({ onNavigate }) => {
     // Calculate stats
     const totalCourses = coursesData.length;
-    const totalLessons = coursesData.reduce((acc, course) => {
+    const totalUnits = coursesData.reduce((acc, course) => {
         return acc + course.terms.reduce((termAcc, term) => {
             return termAcc + term.subjects.reduce((subjectAcc, subject) => {
-                return subjectAcc + subject.units.reduce((unitAcc, unit) => {
-                    return unitAcc + unit.chapters.reduce((chapterAcc, chapter) => {
-                        return chapterAcc + chapter.topics.length;
-                    }, 0);
-                }, 0);
+                return subjectAcc + subject.units.length;
             }, 0);
         }, 0);
     }, 0);
@@ -41,18 +46,33 @@ const DefaultDashboard = ({ onNavigate }) => {
     return (
         <div className="default-dashboard-container">
             <div className="dd-welcome-banner">
-                <h2>Welcome to TutorPad</h2>
-                <p>Enhance your learning with advanced methodologies.</p>
+                <div className="dd-banner-bg-icon">
+                    <BookOpenIcon />
+                </div>
+                <div className="dd-welcome-banner-content">
+                    <h2>Welcome to TutorPad</h2>
+                    <p>Enhance your learning with advanced methodologies.</p>
+                </div>
             </div>
 
             <div className="dd-stats-grid">
-                <div className="dd-stat-card">
-                    <h4>Total Courses</h4>
-                    <p>{totalCourses}</p>
+                <div className="dd-stat-card courses-card">
+                    <div className="dd-stat-card-icon-wrapper">
+                        <LibraryIcon />
+                    </div>
+                    <div className="dd-stat-card-content">
+                        <h4>Total Courses</h4>
+                        <p>{totalCourses}</p>
+                    </div>
                 </div>
-                <div className="dd-stat-card">
-                    <h4>Total Lessons</h4>
-                    <p>{totalLessons}</p>
+                <div className="dd-stat-card lessons-card">
+                    <div className="dd-stat-card-icon-wrapper">
+                        <FileTextIcon />
+                    </div>
+                    <div className="dd-stat-card-content">
+                        <h4>Total Units</h4>
+                        <p>{totalUnits}</p>
+                    </div>
                 </div>
             </div>
 
