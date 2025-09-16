@@ -1109,11 +1109,18 @@ body,
 .lv-toc {
   width: 300px;
   border-right: 1px solid var(--color-border);
-  padding: 16px;
-  overflow-y: auto;
   transition: width 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
 }
+
+.lv-toc-scroll-container {
+  overflow-y: auto;
+  padding: 16px;
+  flex-grow: 1;
+}
+
 
 .lv-toc.collapsed {
   width: 0;
@@ -1342,6 +1349,14 @@ body,
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.lv-toc-overlay {
+  display: none;
+}
+.lv-toc-mobile-header {
+  display: none;
+}
+
 
 /* Module Viewer (Side Panel) Styles */
 .lv-module-viewer {
@@ -2888,12 +2903,45 @@ body,
     background-color: var(--color-bg-tertiary);
     transform: translateX(-100%);
     transition: transform 0.3s ease;
+    padding: 0;
+    border-right: 1px solid var(--color-border);
   }
 
   .lv-toc:not(.collapsed) {
     transform: translateX(0);
+    box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+  }
+  [data-theme='dark'] .lv-toc:not(.collapsed) {
+     box-shadow: 4px 0 15px rgba(0,0,0,0.3);
+  }
+  
+  .lv-toc-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--overlay-bg);
+    z-index: 3999; /* Below TOC */
+    animation: fadeIn 0.3s ease;
   }
 
+  .lv-toc-mobile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0;
+  }
+
+  .lv-toc-mobile-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  
   .lv-main {
     padding: 24px 16px;
   }

@@ -259,7 +259,7 @@ const findUnitForTopic = (subject, topicId) => {
 const LessonViewer = ({lessonData, onClose, completedTopics, setCompletedTopics}) => {
   const {subject, course, term, initialUnitId, initialTopicId} = lessonData;
   const [isTocOpen, setIsTocOpen] = useState(true);
-  const [fontSize, setFontSize] = useState(1); // 1 = 1rem
+  const [fontSize, setFontSize] = useState(0.9); // Default to 0.9rem
   
   const [activeModule, setActiveModule] = useState(null);
   const [isModuleMinimized, setIsModuleMinimized] = useState(false);
@@ -267,8 +267,8 @@ const LessonViewer = ({lessonData, onClose, completedTopics, setCompletedTopics}
   const isResizing = React.useRef(false);
 
   const FONT_STEP = 0.1;
-  const MIN_FONT_SIZE = 0.8;
-  const MAX_FONT_SIZE = 1.5;
+  const MIN_FONT_SIZE = 0.7;
+  const MAX_FONT_SIZE = 1.3;
 
   const flatTopics = useMemo(() => {
     return subject.units.flatMap((unit) =>
@@ -411,6 +411,14 @@ const LessonViewer = ({lessonData, onClose, completedTopics, setCompletedTopics}
 
   return (
     <div className="lesson-viewer-container">
+      {/* Overlay for mobile view to close TOC */}
+      {isTocOpen && (
+        <div
+          className="lv-toc-overlay"
+          onClick={() => setIsTocOpen(false)}
+        ></div>
+      )}
+
       <header className="lv-header">
         <div className="lv-header-left">
           <button
@@ -450,13 +458,25 @@ const LessonViewer = ({lessonData, onClose, completedTopics, setCompletedTopics}
       </header>
       <div className="lv-body">
         <aside className={`lv-toc ${!isTocOpen ? 'collapsed' : ''}`}>
-          <TableOfContents
-            subject={subject}
-            activeTopic={activeTopic}
-            onSelectTopic={setActiveTopic}
-            initialUnitId={initialUnitId}
-            completedTopics={completedTopics}
-          />
+          <div className="lv-toc-mobile-header">
+            <h3>Table of Contents</h3>
+            <button
+              className="lv-toolbar-button"
+              onClick={() => setIsTocOpen(false)}
+              aria-label="Close Table of Contents"
+            >
+              <CloseIcon />
+            </button>
+          </div>
+          <div className="lv-toc-scroll-container">
+            <TableOfContents
+              subject={subject}
+              activeTopic={activeTopic}
+              onSelectTopic={setActiveTopic}
+              initialUnitId={initialUnitId}
+              completedTopics={completedTopics}
+            />
+          </div>
         </aside>
         <main
           className="lv-main"
